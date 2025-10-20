@@ -1,36 +1,59 @@
-import * as hono from 'hono';
-import z from 'zod';
-import { Body, Controller, Ctx, Get, Header, Param, Post, Query } from '../../app/decorator';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '../../app/decorator';
+import { CommonError } from '../../middlewares/error.middleware';
+import type { CreateTodoInput, UpdateTodoInput } from './todo.dto';
+import { createTodoSchema, limitSchema, skipSchema, updateTodoSchema } from './todo.dto';
 
-const createTodoSchema = z.object({
-	title: z.string().min(1),
-});
+let mockTodos = (await import('./mock-todo.json')).default as any[];
 
 @Controller('/int/todos') // controller-level middleware
 export class TodoController {
-	@Get('/')
-	getTodos(@Query('skip') skip?: number, @Query('limit') limit?: number) {
-		console.log({ skip, limit });
-
-		return [
-			{ id: '1', title: 'Todo 1', completed: false },
-			{ id: '2', title: 'Todo 2', completed: true },
-		];
+	@Get()
+	async getTodos(@Query('skip', skipSchema) skip?: number, @Query('limit', limitSchema) limit?: number) {
+		return mockTodos.slice(skip || 0, limit ? (skip || 0) + limit : undefined);
 	}
 
 	@Get('/:id')
-	getTodoById(@Param('id') id: string, @Header('authorization') authHeader?: string) {
-		console.log({ authHeader });
-
-		return { id, title: `Todo ${id}`, completed: false };
+	async getTodoById(@Param('id') id: string) {
+		const todo = mockTodos.find((t) => t.id === id);
+		if (todo) {
+			return todo;
+		}
+		throw new CommonError(404, 'Todo not found');
 	}
 
 	@Post()
-	createTodo(@Body(createTodoSchema) body: z.infer<typeof createTodoSchema>, @Ctx() ctx: hono.Context<{ Bindings: Env }>) {
-		console.log(ctx.env.BEARER_TOKEN);
-
+	createTodo(@Body(createTodoSchema) body: CreateTodoInput) {
+		const newTodo = { id: String(mockTodos.length + 1), ...body, completed: false };
+		mockTodos.push(newTodo);
 		return {
-			body,
+			success: true,
+			data: newTodo,
+		};
+	}
+
+	@Put('/:id')
+	updateTodo(@Param('id') id: string, @Body(updateTodoSchema) body: UpdateTodoInput) {
+		const todo = mockTodos.find((t) => t.id === id);
+		if (!todo) {
+			throw new CommonError(404, 'Todo not found');
+		}
+		todo.title = body.title;
+		todo.completed = body.completed;
+		return {
+			success: true,
+			data: todo,
+		};
+	}
+
+	@Delete('/:id')
+	deleteTodo(@Param('id') id: string) {
+		const index = mockTodos.findIndex((t) => t.id === id);
+		if (index === -1) {
+			throw new CommonError(404, 'Todo not found');
+		}
+		mockTodos.splice(index, 1);
+		return {
+			success: true,
 		};
 	}
 }

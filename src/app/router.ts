@@ -255,6 +255,7 @@ export function buildHonoApp(controllers: AnyController[], options?: BuildOption
 						}
 					}
 
+					// Call the actual method
 					const result = await instance[route.propertyKey as keyof typeof instance](...args);
 
 					if (result instanceof Response) {
@@ -271,16 +272,8 @@ export function buildHonoApp(controllers: AnyController[], options?: BuildOption
 
 					return c.json(result);
 				} catch (err: any) {
-					if (err instanceof ZodError) {
-						return c.json(formatZodError(err), 400);
-					}
-					// Let user-defined onError decide
-					if (options?.onError) {
-						const maybe = options.onError(err);
-						if (maybe instanceof Response) return maybe;
-					}
-					console.error('Unhandled error:', err);
-					return c.json({ message: 'Internal Server Error' }, 500);
+					// error will be handled by app-level error handler
+					throw err;
 				}
 			};
 
@@ -290,6 +283,10 @@ export function buildHonoApp(controllers: AnyController[], options?: BuildOption
 				register(fullPath, handler);
 			}
 		}
+	}
+
+	if (options?.onError) {
+		app.onError(options?.onError);
 	}
 
 	if (options?.notFoundHandler) {

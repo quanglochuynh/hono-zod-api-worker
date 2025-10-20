@@ -1,4 +1,4 @@
-import type { MiddlewareHandler } from 'hono';
+import type { ErrorHandler, MiddlewareHandler } from 'hono';
 import type { ZodObject, ZodRawShape, ZodTypeAny } from 'zod';
 
 export type Constructor<T = any> = new (...args: any[]) => T;
@@ -33,7 +33,7 @@ export type RouteDefinition = {
 export type BuildOptions = {
 	base?: string;
 	topMiddlewares?: { path: string; middlewares: MiddlewareHandler[] }[];
-	onError?: (err: unknown) => Response | void;
+	onError?: ErrorHandler;
 	notFoundHandler?: MiddlewareHandler;
 };
 

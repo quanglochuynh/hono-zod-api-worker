@@ -4,6 +4,7 @@ import 'reflect-metadata';
 import { buildHonoApp } from './app/router';
 import { TodoController } from './features/todos/todo.controller';
 import { AuthMiddleware } from './middlewares/auth.middleware';
+import { ErrorMiddleware } from './middlewares/error.middleware';
 
 const app = buildHonoApp([TodoController], {
 	base: '/',
@@ -13,18 +14,13 @@ const app = buildHonoApp([TodoController], {
 			middlewares: [AuthMiddleware],
 		},
 	],
-	onError: (err) => {
-		return new Response(JSON.stringify({ message: 'Internal Server Error', details: String(err) }), {
-			status: 500,
-			headers: { 'Content-Type': 'application/json' },
-		});
-	},
 	notFoundHandler: async () => {
 		return new Response(JSON.stringify({ message: 'Resource Not Found' }), {
 			status: 404,
 			headers: { 'Content-Type': 'application/json' },
 		});
 	},
+	onError: ErrorMiddleware,
 });
 
 export default class extends WorkerEntrypoint {

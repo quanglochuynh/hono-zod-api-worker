@@ -1,0 +1,28 @@
+meta {
+  name: /todos/:id - delete
+  type: http
+  seq: 5
+}
+
+delete {
+  url: http://localhost:8787/int/todos/:id
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: 2
+}
+
+body:json {
+  {
+    "foo": 1,
+    "bar": "kk",
+    "title": "lorem"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

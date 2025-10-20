@@ -1,0 +1,26 @@
+meta {
+  name: /todos/:id/complete
+  type: http
+  seq: 4
+}
+
+put {
+  url: http://localhost:8787/int/todos/:id
+  body: json
+  auth: inherit
+}
+
+params:path {
+  id: 1
+}
+
+body:json {
+  {
+    "title": "lorem"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
