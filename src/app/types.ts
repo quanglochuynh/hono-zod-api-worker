@@ -1,5 +1,5 @@
 import type { ErrorHandler, MiddlewareHandler } from 'hono';
-import type { ZodObject, ZodRawShape, ZodTypeAny } from 'zod';
+import type { ZodObject, ZodRawShape, ZodType } from 'zod';
 
 export type Constructor<T = any> = new (...args: any[]) => T;
 
@@ -11,14 +11,14 @@ export type ParamDefinition = {
 	index: number;
 	type: ParamType;
 	name?: string;
-	schema?: ZodTypeAny;
+	schema?: ZodType;
 };
 
 export type MethodSchemas = Partial<{
-	body: ZodTypeAny;
-	query: ZodTypeAny;
-	params: ZodTypeAny;
-	headers: ZodTypeAny;
+	body: ZodType;
+	query: ZodType;
+	params: ZodType;
+	headers: ZodType;
 }>;
 
 export type RouteDefinition = {
