@@ -1,18 +1,36 @@
-/**
- * Welcome to Cloudflare Workers! This is your first worker.
- *
- * - Run `npm run dev` in your terminal to start a development server
- * - Open a browser tab at http://localhost:8787/ to see your worker in action
- * - Run `npm run deploy` to publish your worker
- *
- * Bind resources to your worker in `wrangler.jsonc`. After adding bindings, a type definition for the
- * `Env` object can be regenerated with `npm run cf-typegen`.
- *
- * Learn more at https://developers.cloudflare.com/workers/
- */
+import { WorkerEntrypoint } from 'cloudflare:workers';
+import 'reflect-metadata';
 
-export default {
-	async fetch(request, env, ctx): Promise<Response> {
-		return new Response('Hello World!');
+import { buildHonoApp } from './app/router';
+import { TodoController } from './features/todos/todo.controller';
+import { AuthMiddleware } from './middlewares/auth.middleware';
+
+const app = buildHonoApp([TodoController], {
+	base: '/',
+	topMiddlewares: [
+		{
+			path: '/int/*',
+			middlewares: [AuthMiddleware],
+		},
+	],
+	onError: (err) => {
+		return new Response(JSON.stringify({ message: 'Internal Server Error', details: String(err) }), {
+			status: 500,
+			headers: { 'Content-Type': 'application/json' },
+		});
 	},
-} satisfies ExportedHandler<Env>;
+	notFoundHandler: async () => {
+		return new Response(JSON.stringify({ message: 'Resource Not Found' }), {
+			status: 404,
+			headers: { 'Content-Type': 'application/json' },
+		});
+	},
+});
+
+export default class extends WorkerEntrypoint {
+	declare env: Env;
+
+	fetch(request: Request): Response | Promise<Response> {
+		return app.fetch(request, this.env, this.ctx);
+	}
+}
