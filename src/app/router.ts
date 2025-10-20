@@ -74,7 +74,7 @@ export function buildHonoApp(controllers: AnyController[], options?: BuildOption
 		const proto = Ctor.prototype;
 
 		const basePath = (Reflect.getMetadata(META_KEYS.controller.basePath, Ctor) || '') as string;
-		console.log('Registering controller:', Ctor.name, 'with base path:', basePath);
+		// console.log('Registering controller:', Ctor.name, 'with base path:', basePath);
 
 		const controllerMws = (Reflect.getMetadata(META_KEYS.controller.middlewares, Ctor) || []) as MiddlewareHandler[];
 
@@ -92,7 +92,7 @@ export function buildHonoApp(controllers: AnyController[], options?: BuildOption
 				fullPath = fullPath.slice(0, -1);
 			}
 
-			console.log(`Registering route: [${route.method.toUpperCase()}] ${fullPath} -> ${Ctor.name}.${String(route.propertyKey)}`);
+			// console.log(`Registering route: [${route.method.toUpperCase()}] ${fullPath} -> ${Ctor.name}.${String(route.propertyKey)}`);
 
 			// Also read method-level metadata stored directly (in case decorator order differs)
 			const methodLevelMiddlewares = (Reflect.getMetadata(META_KEYS.method.middlewares, proto, route.propertyKey) ||
