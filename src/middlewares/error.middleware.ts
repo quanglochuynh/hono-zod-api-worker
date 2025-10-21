@@ -22,8 +22,6 @@ interface Context {
 }
 
 export const ErrorMiddleware: ErrorHandler = async (err, c) => {
-	// console.log(err.name, err.message);
-
 	if (err.name === 'ZodError') {
 		return c.json(
 			{
@@ -44,16 +42,6 @@ export const ErrorMiddleware: ErrorHandler = async (err, c) => {
 				status: err.status || 500,
 			},
 			(err?.status as any) || 500,
-		);
-	}
-	const isPrismaError = String(err.name).toLowerCase().includes('prisma');
-	if (isPrismaError) {
-		return c.json(
-			{
-				success: false,
-				message: err.message,
-			},
-			400,
 		);
 	}
 

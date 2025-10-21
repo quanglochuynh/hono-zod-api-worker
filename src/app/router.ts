@@ -49,11 +49,11 @@ async function parseBody(c: any) {
 	}
 }
 
-function formatZodError(err: ZodError) {
+function formatZodError(err: ZodError, rootPath?: string) {
 	return {
 		message: 'Validation failed',
 		issues: err.issues.map((i) => ({
-			path: i.path.join('.'),
+			path: `${rootPath || ''}${i.path.join('.')}`,
 			message: i.message,
 			code: i.code,
 		})),
@@ -190,7 +190,7 @@ export function buildHonoApp(controllers: AnyController[], options?: BuildOption
 									if (p.schema) {
 										const parsed = p.schema.safeParse(raw);
 										if (!parsed.success) {
-											return c.json(formatZodError(parsed.error), 400);
+											return c.json(formatZodError(parsed.error, p.name), 400);
 										}
 										args[p.index] = parsed.data;
 									} else {

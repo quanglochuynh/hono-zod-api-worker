@@ -1,14 +1,15 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '../../app/decorator';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query } from '../../app/decorator';
 import { CommonError } from '../../middlewares/error.middleware';
-import type { CreateTodoInput, UpdateTodoInput } from './todo.dto';
-import { createTodoSchema, limitSchema, skipSchema, updateTodoSchema } from './todo.dto';
+import type { CreateTodoInput, PaginateInput, UpdateTodoInput } from './todo.dto';
+import { createTodoSchema, paginateSchema, updateTodoSchema } from './todo.dto';
 
 let mockTodos = (await import('./mock-todo.json')).default as any[];
 
 @Controller('/int/todos') // controller-level middleware
 export class TodoController {
 	@Get()
-	async getTodos(@Query('skip', skipSchema) skip?: number, @Query('limit', limitSchema) limit?: number) {
+	async getTodos(@Query({ schema: paginateSchema }) page: PaginateInput) {
+		const { skip, limit } = page;
 		return mockTodos.slice(skip || 0, limit ? (skip || 0) + limit : undefined);
 	}
 
@@ -22,6 +23,7 @@ export class TodoController {
 	}
 
 	@Post()
+	@HttpCode(201)
 	createTodo(@Body(createTodoSchema) body: CreateTodoInput) {
 		const newTodo = { id: String(mockTodos.length + 1), ...body, completed: false };
 		mockTodos.push(newTodo);

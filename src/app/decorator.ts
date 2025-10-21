@@ -14,6 +14,7 @@ export function Controller(basePath = '', ...middlewares: MiddlewareHandler[]) {
 }
 
 // Method-level middleware decorator
+// Can be used to add middleware to specific route handlers. E.g., authentication, logging, etc.
 export function Use(...middlewares: MiddlewareHandler[]) {
 	return function (target: any, propertyKey: string | symbol) {
 		const existing = (Reflect.getMetadata(META_KEYS.method.middlewares, target, propertyKey) || []) as MiddlewareHandler[];
@@ -22,6 +23,7 @@ export function Use(...middlewares: MiddlewareHandler[]) {
 }
 
 // Method-level status code decorator
+// Overriding defaults 200 when request is successful
 export function HttpCode(status: number) {
 	return function (target: any, propertyKey: string | symbol) {
 		Reflect.defineMetadata(META_KEYS.method.status, status, target, propertyKey);
@@ -29,6 +31,7 @@ export function HttpCode(status: number) {
 }
 
 // Method-level validation decorator for full objects
+// e.g., for request body, query, params, headers
 export function Validate(schemas: MethodSchemas) {
 	return function (target: any, propertyKey: string | symbol) {
 		Reflect.defineMetadata(META_KEYS.method.schemas, schemas, target, propertyKey);
@@ -66,7 +69,6 @@ export const Put = createRouteDecorator('put');
 export const Patch = createRouteDecorator('patch');
 export const Delete = createRouteDecorator('delete');
 export const Options = createRouteDecorator('options');
-// export const Head = createRouteDecorator('head');
 export const All = createRouteDecorator('all');
 
 // Parameter decorators
@@ -81,7 +83,7 @@ export function Body(schema?: any) {
 	};
 }
 
-export function Query(name?: string, schema?: any) {
+export function Query({ name, schema }: { name?: string; schema?: any }) {
 	return function (target: any, propertyKey: string | symbol, parameterIndex: number) {
 		addParamMetadata(target, propertyKey, { index: parameterIndex, type: 'query', name, schema });
 	};
@@ -93,7 +95,7 @@ export function Param(name: string, schema?: any) {
 	};
 }
 
-export function Header(name?: string, schema?: any) {
+export function Header({ name, schema }: { name?: string; schema?: any }) {
 	return function (target: any, propertyKey: string | symbol, parameterIndex: number) {
 		addParamMetadata(target, propertyKey, { index: parameterIndex, type: 'header', name, schema });
 	};
