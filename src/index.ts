@@ -1,6 +1,5 @@
 import { WorkerEntrypoint } from 'cloudflare:workers';
 import 'reflect-metadata';
-
 import { buildHonoApp } from './app/router';
 import { TodoController } from './features/todos/todo.controller';
 import { AuthMiddleware } from './middlewares/auth.middleware';
@@ -21,6 +20,8 @@ const app = buildHonoApp([TodoController], {
 		});
 	},
 	onError: ErrorMiddleware,
+	enableIntrospection: true,
+	introspectionPath: '/introspect',
 });
 
 export default class extends WorkerEntrypoint {

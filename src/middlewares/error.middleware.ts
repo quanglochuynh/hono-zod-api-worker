@@ -10,15 +10,12 @@ export class CommonError extends Error {
 	}
 }
 
-interface ErrorResponse {
-	success: boolean;
-	message: string;
-	status?: number;
-	name?: string;
-}
-
-interface Context {
-	json: (body: ErrorResponse, status?: number) => Promise<Response>;
+function safeParseJson(object: any) {
+	try {
+		return JSON.parse(object);
+	} catch {
+		return null;
+	}
 }
 
 export const ErrorMiddleware: ErrorHandler = async (err, c) => {
@@ -28,7 +25,7 @@ export const ErrorMiddleware: ErrorHandler = async (err, c) => {
 				success: false,
 				message: 'Validation error',
 				status: 400,
-				errors: err.message,
+				errors: safeParseJson(err.message),
 			},
 			400,
 		);

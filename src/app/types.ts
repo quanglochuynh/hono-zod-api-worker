@@ -10,8 +10,8 @@ export type ParamType = 'body' | 'query' | 'param' | 'header' | 'ctx' | 'req';
 export type ParamDefinition = {
 	index: number;
 	type: ParamType;
-	name?: string;
-	schema?: ZodType;
+	name?: string | undefined;
+	schema?: ZodType | undefined;
 };
 
 export type MethodSchemas = Partial<{
@@ -35,6 +35,32 @@ export type BuildOptions = {
 	topMiddlewares?: { path: string; middlewares: MiddlewareHandler[] }[];
 	onError?: ErrorHandler;
 	notFoundHandler?: MiddlewareHandler;
+	enableIntrospection?: boolean;
+	introspectionPath?: string;
 };
+
+export type IntrospectionObject = {
+	method: HttpMethod;
+	path: string;
+	schema?: {
+		body?: any;
+		query?: any;
+		params?: any;
+		headers?: any;
+	};
+};
+
+type DecoratorOptionsWithSchema = {
+	// withSchema: true;
+	schema: ZodType;
+};
+
+type DecoratorOptionsWithoutSchema = {
+	// withSchema?: false;
+	name: string;
+	schema?: ZodType;
+};
+
+export type DecoratorOptions = DecoratorOptionsWithSchema | DecoratorOptionsWithoutSchema;
 
 export type AnyZodObject = ZodObject<ZodRawShape>;
