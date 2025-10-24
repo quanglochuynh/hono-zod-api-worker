@@ -3,9 +3,17 @@ import { Hono } from 'hono';
 import 'reflect-metadata';
 import { joinPath, META_KEYS } from './constants';
 
-import type { BuildOptions, Constructor, HttpMethod, IntrospectionObject, ParamDefinition, RouteDefinition } from './types';
+import { processIntrospection } from './introspect/process-introspect';
+import type {
+	BuildOptions,
+	Constructor,
+	HttpMethod,
+	IntrospectionObject,
+	ParamDefinition,
+	RouteDefinition,
+	SWTZodSchema,
+} from './types';
 import { createRouteHandler } from './utils/create-handler';
-import { processIntrospection } from './utils/introspect';
 
 type AnyController = Constructor<any>;
 
@@ -31,7 +39,7 @@ function methodToRegister(app: Hono, method: HttpMethod) {
 export function buildHonoApp(controllers: AnyController[], options?: BuildOptions) {
 	const app = new Hono();
 
-	const introspectionObjects: IntrospectionObject[] = [];
+	const introspectionArray: IntrospectionObject[] = [];
 
 	if (options?.topMiddlewares && options.topMiddlewares.length > 0) {
 		for (const { path, middlewares } of options.topMiddlewares) {
@@ -46,7 +54,8 @@ export function buildHonoApp(controllers: AnyController[], options?: BuildOption
 		const basePath = (Reflect.getMetadata(META_KEYS.controller.basePath, Ctor) || '') as string;
 		// console.log('Registering controller:', Ctor.name, 'with base path:', basePath);
 
-		const controllerMws = (Reflect.getMetadata(META_KEYS.controller.middlewares, Ctor) || []) as MiddlewareHandler[];
+		const controllerMws = (Reflect.getMetadata(META_KEYS.controller.middlewares, Ctor) ||
+			[]) as MiddlewareHandler[];
 
 		app.use(`${basePath}/*`, ...controllerMws); // Apply controller-level middlewares
 
@@ -63,23 +72,35 @@ export function buildHonoApp(controllers: AnyController[], options?: BuildOption
 			// console.log(`Registering route: [${route.method.toUpperCase()}] ${fullPath} -> ${Ctor.name}.${String(route.propertyKey)}`);
 
 			// Also read method-level metadata stored directly (in case decorator order differs)
-			const methodLevelMiddlewares = (Reflect.getMetadata(META_KEYS.method.middlewares, proto, route.propertyKey) ||
-				[]) as MiddlewareHandler[];
+			const methodLevelMiddlewares = (Reflect.getMetadata(
+				META_KEYS.method.middlewares,
+				proto,
+				route.propertyKey,
+			) || []) as MiddlewareHandler[];
 			const mergedMws = [...(route.middlewares || []), ...methodLevelMiddlewares];
 
-			const statusCode = (Reflect.getMetadata(META_KEYS.method.status, proto, route.propertyKey) as number | undefined) || route.statusCode;
+			const statusCode =
+				(Reflect.getMetadata(META_KEYS.method.status, proto, route.propertyKey) as
+					| number
+					| undefined) || route.statusCode;
 
-			const schemas = (Reflect.getMetadata(META_KEYS.method.schemas, proto, route.propertyKey) || route.schemas) as
-				| RouteDefinition['schemas']
-				| undefined;
+			const schemas = (Reflect.getMetadata(META_KEYS.method.schemas, proto, route.propertyKey) ||
+				route.schemas) as RouteDefinition['schemas'] | undefined;
 
-			const paramDefs = (Reflect.getMetadata(META_KEYS.params, proto, route.propertyKey) || []) as ParamDefinition[];
+			const paramDefs = (Reflect.getMetadata(META_KEYS.params, proto, route.propertyKey) ||
+				[]) as ParamDefinition[];
 
 			// Introspection
 			if (options?.enableIntrospection) {
 				console.log('Generating introspection for route:', route.method.toUpperCase(), fullPath);
-				const newRouteIntrospection = processIntrospection(route.method, paramDefs, fullPath, schemas);
-				introspectionObjects.push(newRouteIntrospection!);
+				const newRouteIntrospection = processIntrospection(
+					route.handlerName,
+					route.method,
+					paramDefs,
+					fullPath,
+					schemas,
+				);
+				introspectionArray.push(newRouteIntrospection!);
 			}
 
 			// Handler
@@ -93,9 +114,15 @@ export function buildHonoApp(controllers: AnyController[], options?: BuildOption
 		}
 	}
 
+	app.get('/', (c) => {
+		return c.json({
+			message: 'Welcome to the Hono Zod API Worker!',
+		});
+	});
+
 	if (options?.enableIntrospection) {
 		app.get(options.introspectionPath || '/introspection', (c) => {
-			return c.json(introspectionObjects);
+			return c.json(introspectionArray);
 		});
 	}
 
@@ -105,6 +132,10 @@ export function buildHonoApp(controllers: AnyController[], options?: BuildOption
 
 	if (options?.notFoundHandler) {
 		app.notFound(options.notFoundHandler as NotFoundHandler);
+	} else {
+		app.notFound((c) => {
+			return c.json({ message: 'Not Found' }, 404);
+		});
 	}
 
 	return app;

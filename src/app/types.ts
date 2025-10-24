@@ -22,6 +22,7 @@ export type MethodSchemas = Partial<{
 }>;
 
 export type RouteDefinition = {
+	handlerName: string;
 	method: HttpMethod;
 	path: string;
 	propertyKey: string | symbol;
@@ -39,14 +40,51 @@ export type BuildOptions = {
 	introspectionPath?: string;
 };
 
+export type ZodStringSchema = {
+	name: string;
+	type: 'string';
+	minLength?: number;
+	maxLength?: number;
+};
+export type ZodNumberSchema = {
+	name: string;
+	type: 'number';
+	minimum?: number;
+	maximum?: number;
+};
+export type ZodBooleanSchema = {
+	name: string;
+	type: 'boolean';
+};
+
+export type ZodObjectSchema = {
+	name: string;
+	type: 'object';
+	properties: Record<string, any>;
+};
+
+export type ZodArraySchema = {
+	name: string;
+	type: 'array';
+	items: any;
+};
+
+export type SWTZodSchema =
+	| ZodStringSchema
+	| ZodNumberSchema
+	| ZodBooleanSchema
+	| ZodObjectSchema
+	| ZodArraySchema;
+
 export type IntrospectionObject = {
+	name: string;
 	method: HttpMethod;
 	path: string;
 	schema?: {
-		body?: any;
-		query?: any;
-		params?: any;
-		headers?: any;
+		body?: SWTZodSchema[];
+		query?: SWTZodSchema[];
+		params?: SWTZodSchema[];
+		headers?: SWTZodSchema[];
 	};
 };
 

@@ -1,11 +1,11 @@
 import { HttpMethod, IntrospectionObject, MethodSchemas, ParamDefinition } from '../types';
-import { cleanSchemaForIntrospection, unwrapSingleItemArray } from './common-utils';
+import { cleanSchemaForIntrospection } from '../utils/common-utils';
 
 export function processIntrospection(
+	handlerName: string,
 	method: HttpMethod,
 	paramDefs: ParamDefinition[],
 	path: string,
-
 	schemas?: MethodSchemas,
 ): IntrospectionObject {
 	const paramSchemas = [];
@@ -41,14 +41,16 @@ export function processIntrospection(
 	}
 
 	const newRouteIntrospection = {
+		name: handlerName,
 		method: method,
 		path: path,
 		schema: {
-			body: unwrapSingleItemArray(bodySchemas),
-			query: unwrapSingleItemArray(querySchemas),
-			params: unwrapSingleItemArray(paramSchemas),
-			headers: unwrapSingleItemArray(headerSchemas),
+			body: bodySchemas,
+			query: querySchemas,
+			params: paramSchemas,
+			headers: headerSchemas,
 		},
 	};
+
 	return newRouteIntrospection;
 }

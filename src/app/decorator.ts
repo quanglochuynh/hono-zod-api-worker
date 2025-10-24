@@ -52,6 +52,7 @@ function createRouteDecorator(method: HttpMethod) {
 			const schemas = (Reflect.getMetadata(META_KEYS.method.schemas, target, propertyKey) || undefined) as MethodSchemas | undefined;
 
 			const route = {
+				handlerName: propertyKey.toString(),
 				method,
 				path,
 				propertyKey,

@@ -8,6 +8,12 @@ importers:
 
   .:
     dependencies:
+      '@anatine/zod-mock':
+        specifier: ^3.14.0
+        version: 3.14.0(@faker-js/faker@10.1.0)(zod@4.1.12)
+      '@faker-js/faker':
+        specifier: ^10.1.0
+        version: 10.1.0
       hono:
         specifier: ^4.10.1
         version: 4.10.1
@@ -17,6 +23,12 @@ importers:
       zod:
         specifier: ^4.1.12
         version: 4.1.12
+      zod-fixture:
+        specifier: ^2.5.2
+        version: 2.5.2(zod@4.1.12)
+      zod-schema-faker:
+        specifier: ^1.5.5
+        version: 1.5.5(zod@4.1.12)
     devDependencies:
       '@cloudflare/vitest-pool-workers':
         specifier: ^0.8.19
@@ -40,10 +52,16 @@ importers:
         specifier: ~3.2.0
         version: 3.2.4(@types/node@24.8.1)(jiti@2.6.1)
       wrangler:
-        specifier: ^4.44.0
-        version: 4.44.0(@cloudflare/workers-types@4.20251011.0)
+        specifier: ^4.45.0
+        version: 4.45.0(@cloudflare/workers-types@4.20251011.0)
 
 packages:
+
+  '@anatine/zod-mock@3.14.0':
+    resolution: {integrity: sha512-pTYyn9dlszUl5gMGWtE7DBRvx1EcqpBJ1iJ73rlJYCZr9lgIEdZ6PCZQqoXIdlC8DYIwuT1M3/N8arkJa7A10Q==}
+    peerDependencies:
+      '@faker-js/faker': ^7.0.0 || ^8.0.0 || ^9.0.0
+      zod: ^3.21.4
 
   '@cloudflare/kv-asset-handler@0.4.0':
     resolution: {integrity: sha512-+tv3z+SPp+gqTIcImN9o0hqE9xyfQjI1XD9pL6NuKjua9B1y7mNYv0S9cP+QEbA4ppVgGZEmKOvHX5G5Ei1CVA==}
@@ -450,6 +468,14 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@faker-js/faker@10.1.0':
+    resolution: {integrity: sha512-C3mrr3b5dRVlKPJdfrAXS8+dq+rq8Qm5SNRazca0JKgw1HQERFmrVb0towvMmw5uu8hHKNiQasMaR/tydf3Zsg==}
+    engines: {node: ^20.19.0 || ^22.13.0 || ^23.5.0 || >=24.0.0, npm: '>=10'}
+
+  '@faker-js/faker@9.7.0':
+    resolution: {integrity: sha512-aozo5vqjCmDoXLNUJarFZx2IN/GgGaogY4TMJ6so/WLZOWpSV7fvj2dmrV6sEAnUm1O7aCrhTibjpzeDFgNqbg==}
+    engines: {node: '>=18.0.0', npm: '>=9.0.0'}
+
   '@img/sharp-darwin-arm64@0.33.5':
     resolution: {integrity: sha512-UT4p+iz/2H4twwAoLCqfA9UH5pI6DggwKEGuaPy7nCVQ8ZsiY5PIcrRvD1DzuY3qYL07NtIQcWnBSY/heikIFQ==}
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
@@ -811,6 +837,10 @@ packages:
   devalue@5.4.1:
     resolution: {integrity: sha512-YtoaOfsqjbZQKGIMRYDWKjUmSB4VJ/RElB+bXZawQAQYAo4xu08GKTMVlsZDTF6R2MbAgjcAQRPI5eIyRAT2OQ==}
 
+  drange@1.1.1:
+    resolution: {integrity: sha512-pYxfDYpued//QpnLIm4Avk7rsNtAtQkUES2cwAYSvD/wd2pKD71gN2Ebj3e7klzXwjocvE8c5vx/1fxwpqmSxA==}
+    engines: {node: '>=4'}
+
   error-stack-parser-es@1.0.5:
     resolution: {integrity: sha512-5qucVt2XcuGMcEGgWI7i+yZpmpByQ8J1lHhcL7PwqCwu9FPP3VUXzT4ltHe5i2z9dePwEHcDVOAfSnHsOlCXRA==}
 
@@ -892,8 +922,8 @@ packages:
     engines: {node: '>=18.0.0'}
     hasBin: true
 
-  miniflare@4.20251011.0:
-    resolution: {integrity: sha512-DlZ7vR5q/RE9eLsxsrXzfSZIF2f6O5k0YsFrSKhWUtdefyGtJt4sSpR6V+Af/waaZ6+zIFy9lsknHBCm49sEYA==}
+  miniflare@4.20251011.1:
+    resolution: {integrity: sha512-Qbw1Z8HTYM1adWl6FAtzhrj34/6dPRDPwdYOx21dkae8a/EaxbMzRIPbb4HKVGMVvtqbK1FaRCgDLVLolNzGHg==}
     engines: {node: '>=18.0.0'}
     hasBin: true
 
@@ -944,8 +974,16 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
 
+  randexp@0.5.3:
+    resolution: {integrity: sha512-U+5l2KrcMNOUPYvazA3h5ekF80FHTUG+87SEAmHZmolh1M+i/WyTCxVzmi+tidIa1tM4BSe8g2Y/D3loWDjj+w==}
+    engines: {node: '>=4'}
+
   reflect-metadata@0.2.2:
     resolution: {integrity: sha512-urBwgfrvVP/eAyXx4hluJivBKzuEbSQs9rKWCrCkbSxNv8mxPcUZKeuoF3Uy4mJl3Lwprp6yy5/39VWigZ4K6Q==}
+
+  ret@0.2.2:
+    resolution: {integrity: sha512-M0b3YWQs7R3Z917WRQy1HHA7Ba7D8hvZg6UE5mLykJxQVE2ju0IXbGlaHPPlkY+WN7wFP+wUMXmBFA0aV6vYGQ==}
+    engines: {node: '>=4'}
 
   rollup@4.52.5:
     resolution: {integrity: sha512-3GuObel8h7Kqdjt0gxkEzaifHTqLVW56Y/bjN7PSQtkKr0w3V/QYSdt6QWYtd7A1xUtYQigtdUfgj1RvWVtorw==}
@@ -1133,8 +1171,8 @@ packages:
       '@cloudflare/workers-types':
         optional: true
 
-  wrangler@4.44.0:
-    resolution: {integrity: sha512-BLOUigckcWZ0r4rm7b5PuaTpb9KP9as0XeCRSJ8kqcNgXcKoUD3Ij8FlPvN25KybLnFnetaO0ZdfRYUPWle4qw==}
+  wrangler@4.45.0:
+    resolution: {integrity: sha512-2qM6bHw8l7r89Z9Y5A7Wn4L9U+dFoLjYgEUVpqy7CcmXpppL3QIYqU6rU5lre7/SRzBuPu/H93Vwfh538gZ3iw==}
     engines: {node: '>=18.0.0'}
     hasBin: true
     peerDependencies:
@@ -1161,6 +1199,16 @@ packages:
   youch@4.1.0-beta.10:
     resolution: {integrity: sha512-rLfVLB4FgQneDr0dv1oddCVZmKjcJ6yX6mS4pU82Mq/Dt9a3cLZQ62pDBL4AUO+uVrCvtWz3ZFUL2HFAFJ/BXQ==}
 
+  zod-fixture@2.5.2:
+    resolution: {integrity: sha512-JipX1OVrKA3QSdx/k29sK9zocFM8mvdFHu8Wt0htrJ5ZlE8vcmnNfT9iKXMjjc3Hqy8btWtPyP4e03D0IxpVxg==}
+    peerDependencies:
+      zod: '>=3.0.0'
+
+  zod-schema-faker@1.5.5:
+    resolution: {integrity: sha512-3i+66zx7p1awFQv67e8KE96nnM9sBOubTdhrRdFisCdRniQ6pFaHPkls6WwhlPxLWoaGFS1VQjq4SnnTThpoZA==}
+    peerDependencies:
+      zod: '*'
+
   zod@3.22.3:
     resolution: {integrity: sha512-EjIevzuJRiRPbVH4mGc8nApb/lVLKVpmUhAaR5R5doKGfAnGJ6Gr3CViAVjP+4FWSxCsybeWQdcgCtbX+7oZug==}
 
@@ -1171,6 +1219,12 @@ packages:
     resolution: {integrity: sha512-JInaHOamG8pt5+Ey8kGmdcAcg3OL9reK8ltczgHTAwNhMys/6ThXHityHxVV2p3fkw/c+MAvBHFVYHFZDmjMCQ==}
 
 snapshots:
+
+  '@anatine/zod-mock@3.14.0(@faker-js/faker@10.1.0)(zod@4.1.12)':
+    dependencies:
+      '@faker-js/faker': 10.1.0
+      randexp: 0.5.3
+      zod: 4.1.12
 
   '@cloudflare/kv-asset-handler@0.4.0':
     dependencies:
@@ -1399,6 +1453,10 @@ snapshots:
 
   '@esbuild/win32-x64@0.25.4':
     optional: true
+
+  '@faker-js/faker@10.1.0': {}
+
+  '@faker-js/faker@9.7.0': {}
 
   '@img/sharp-darwin-arm64@0.33.5':
     optionalDependencies:
@@ -1678,6 +1736,8 @@ snapshots:
 
   devalue@5.4.1: {}
 
+  drange@1.1.1: {}
+
   error-stack-parser-es@1.0.5: {}
 
   es-module-lexer@1.7.0: {}
@@ -1795,7 +1855,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  miniflare@4.20251011.0:
+  miniflare@4.20251011.1:
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       acorn: 8.14.0
@@ -1842,7 +1902,14 @@ snapshots:
 
   prettier@3.6.2: {}
 
+  randexp@0.5.3:
+    dependencies:
+      drange: 1.1.1
+      ret: 0.2.2
+
   reflect-metadata@0.2.2: {}
+
+  ret@0.2.2: {}
 
   rollup@4.52.5:
     dependencies:
@@ -2069,13 +2136,13 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  wrangler@4.44.0(@cloudflare/workers-types@4.20251011.0):
+  wrangler@4.45.0(@cloudflare/workers-types@4.20251011.0):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.4.0
       '@cloudflare/unenv-preset': 2.7.8(unenv@2.0.0-rc.21)(workerd@1.20251011.0)
       blake3-wasm: 2.1.5
       esbuild: 0.25.4
-      miniflare: 4.20251011.0
+      miniflare: 4.20251011.1
       path-to-regexp: 6.3.0
       unenv: 2.0.0-rc.21
       workerd: 1.20251011.0
@@ -2100,6 +2167,17 @@ snapshots:
       '@speed-highlight/core': 1.2.7
       cookie: 1.0.2
       youch-core: 0.3.3
+
+  zod-fixture@2.5.2(zod@4.1.12):
+    dependencies:
+      randexp: 0.5.3
+      zod: 4.1.12
+
+  zod-schema-faker@1.5.5(zod@4.1.12):
+    dependencies:
+      '@faker-js/faker': 9.7.0
+      randexp: 0.5.3
+      zod: 4.1.12
 
   zod@3.22.3: {}
 

@@ -1,5 +1,15 @@
 import z from 'zod';
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query } from '../../app/decorator';
+import {
+	Body,
+	Controller,
+	Delete,
+	Get,
+	HttpCode,
+	Param,
+	Post,
+	Put,
+	Query,
+} from '../../app/decorator';
 import { CommonError } from '../../middlewares/error.middleware';
 import {
 	type CreateTodoInput,
@@ -24,7 +34,7 @@ export class TodoController {
 	async getTodoById(
 		@Param({
 			name: 'id',
-			schema: z.number().min(0),
+			schema: z.coerce.number().min(0),
 		})
 		id: number,
 	) {
@@ -84,14 +94,4 @@ export class TodoController {
 			success: true,
 		};
 	}
-
-	// @Post('/foo')
-	// async getFoo(
-	// 	@Body(paginateSchema)
-	// 	page: PaginateInput,
-	// ) {
-	// 	return {
-	// 		message: `You sent ${JSON.stringify(page)}`,
-	// 	};
-	// }
 }
